@@ -1,0 +1,26 @@
+import pyowm
+import telebot
+
+owm = pyowm.OWM('a74d52cc72a6976ee0b0ee7c2fcacdbe')
+bot = telebot.TeleBot("937474050:AAFCTdmOextVgRdwxDvCL3PRMzMpZBIqrZw")
+
+@bot.message_handler(content_types=['text'])
+def send_echo(message):
+    observation = owm.weather_at_place(message.text)
+    w = observation.get_weather()
+    temp = w.get_temperature('fahrenheit')["temp"]
+    
+    answer = (" It is " + w.get_detailed_status() + " in " + message.text + " now") 
+    answer += (" It is " + str(temp))
+    
+    if temp < 50:
+        answer += " It is so cold, stay home!"
+    elif temp < 68:
+        answer += " It's warm!"
+    else:
+        answer += " It's hot out !"
+    
+    bot.send_message(message.chat.id, answer)
+
+    
+bot.polling( none_stop = True) 
